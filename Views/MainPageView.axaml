@@ -1,0 +1,77 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="UP_4.Views.MainPageView"
+             xmlns:vm="clr-namespace:UP_4.ViewModels"
+             x:DataType="vm:MainPageViewModel">
+
+    <Grid RowDefinitions="60, 40, *" ColumnDefinitions="200, *">
+
+		<Border Grid.Row="0" Grid.ColumnSpan="2" Background="White" >
+            <Grid ColumnDefinitions="80*, 20*">
+				<Image Grid.Column="0"
+                       HorizontalAlignment="Left"
+                       VerticalAlignment="Center"
+                       Margin="10,0,0,0"
+                       Source="/Assets/Logo.png"/>
+                <Border Grid.Column="1">
+                    <Grid ColumnDefinitions="30*, 70*">
+                        <Image Grid.Column="0" />
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
+							<TextBlock Text="{Binding CurrentUser.ShortName}"/>
+                            <TextBlock Text="{Binding CurrentUser.IdRoleNavigation.Name}"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+            </Grid>
+        </Border>
+
+        <Grid Grid.Row="1" ColumnDefinitions="70*, 30*">
+			<Border Grid.Column="0" Background="#1d2127">
+				<TextBlock Text="Навигация"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center"
+                            Foreground="White"
+                            Padding="5"/>
+            </Border>
+
+            <Border Grid.Column="1" Background="#171717">
+				<Button Content="|||" 
+                        Foreground="White"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"/>
+            </Border>
+        </Grid> 
+
+        <Border Grid.Row="1" Grid.Column="1" Background="#171717">
+            <Grid ColumnDefinitions="80*, 20*">
+				<TextBlock Text="Заглушка компании"
+                       HorizontalAlignment="Left"
+                       VerticalAlignment="Center"
+                       Padding="5"
+                       Foreground="White"/>
+            </Grid>
+        </Border>
+
+        <Border Grid.Column="0" Grid.Row="2" Background="#1d2127">
+			<StackPanel HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10">
+				<Button Content="Главная" Margin="0,0,0,10" Width="160" Foreground="White"/>
+                <Button Content="Администрирование" Margin="0,0,0,10"  Width="160" Foreground="White"/>
+            </StackPanel>
+        </Border>
+
+        <Border Grid.Row="2" Grid.Column="1" Background="#d9d9d9"> 
+            <Grid RowDefinitions="50, *">
+				<Border Grid.Row="0" Background="#d9d9d9">
+					<TextBlock Text="Личный кабинет. Главная"
+                               HorizontalAlignment="Left"
+                               VerticalAlignment="Center"
+                               Padding="15"/>
+                </Border>
+            </Grid>
+        </Border>
+    </Grid>
+
+</UserControl>

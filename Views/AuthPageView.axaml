@@ -1,0 +1,51 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="UP_4.Views.AuthPageView"
+             xmlns:vm="clr-namespace:UP_4.ViewModels"
+             x:DataType="vm:AuthPageViewModel">
+
+    <StackPanel VerticalAlignment="Top" HorizontalAlignment="Center">
+        <Image Source="/Assets/Logo.png"
+               Height="200"
+               Width="200"/>
+
+        <TextBox Watermark="Email" 
+                 Margin="0,0,0,10"
+                 Text="{Binding Email}"
+                 Width="200"/>
+
+        <TextBox Watermark="Пароль" 
+                 Margin="0,0,0,10"
+                 Text="{Binding Password}"
+                 Width="200"/>
+
+        <TextBox Watermark="Код подтверждения" 
+                 Margin="0,0,0,10"
+                 Text="{Binding Kod_email}"
+                 Width="200"/>
+
+         <TextBox Watermark="Код франчайзера" 
+                 Margin="0,0,0,10"
+                 Text="{Binding Kod_franch}"
+                 Width="200"/>
+
+        <Button Content="Войти"
+                HorizontalAlignment="Center"
+                Width="100"
+                Margin="0,0,0,20"
+                HorizontalContentAlignment="Center"
+                VerticalContentAlignment="Center"
+                Command="{Binding EnterCommand}"/>
+
+        <HyperlinkButton Content="Зарегестрироваться"
+                         HorizontalAlignment="Center"
+                         Command="{Binding RegistrationCommand}"/>
+
+        <TextBlock Text="{Binding Message}"
+                   HorizontalAlignment="Center"/>
+    </StackPanel>
+
+</UserControl>

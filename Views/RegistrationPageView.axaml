@@ -1,0 +1,69 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="UP_4.Views.RegistrationPageView"
+             xmlns:vm="clr-namespace:UP_4.ViewModels"
+             x:DataType="vm:RegistrationPageViewModel">
+    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+        <TextBlock Text="Регистрация" 
+                   FontWeight="Bold" 
+                   FontSize="30"
+                   HorizontalAlignment="Center"
+                   Margin="0,0,0,10"/>
+
+		<TextBox Text="{Binding Email}"
+                 Margin="0,0,0,10"
+                 Watermark="Email"
+                 Width="300"/>
+        <TextBox Text="{Binding Password}"
+                 Margin="0,0,0,10"
+                 Watermark="Пароль"
+                 Width="300"/>
+
+        <Border Background="Gray" Height="30" Width="350" Margin="10" CornerRadius="10" BorderThickness="1" BorderBrush="Black">
+			<TextBlock Text="Для регистрации, необходимо решить задачи"
+                       TextAlignment="Center"
+                       VerticalAlignment="Center"/>
+        </Border>
+        
+        <ItemsControl ItemsSource="{Binding Examples}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <DockPanel Margin="10">
+                        <TextBlock Text="{Binding Expression}" 
+                                  Margin="10" 
+                                  DockPanel.Dock="Left"/>
+                        <TextBox Text="{Binding UserAnswer, Mode=TwoWay}" 
+                                 Width="80" 
+                                 Margin="5"/>
+                    </DockPanel>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <Button Content="Зарегистрироваться"
+                HorizontalAlignment="Center"
+                Margin="20"
+                VerticalContentAlignment="Center"
+                HorizontalContentAlignment="Center"
+                Command="{Binding RegistrationAddCommand}"/>
+
+        <TextBlock Text="{Binding Message}"
+                   HorizontalAlignment="Center"/>
+
+        <Button Content="Вернуться на экран авторизации"
+                HorizontalAlignment="Center"
+                Margin="20"
+                VerticalContentAlignment="Center"
+                HorizontalContentAlignment="Center"
+                Command="{Binding BackCommand}"/>
+
+    </StackPanel>
+</UserControl>

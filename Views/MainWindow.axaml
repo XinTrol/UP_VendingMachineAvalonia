@@ -1,0 +1,28 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:UP_4.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="UP_4.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Icon="/Assets/Logo.png"
+        Title="Джитсу Вендинг"
+        xmlns:View="clr-namespace:UP_4.Views">
+
+    <Design.DataContext>
+        <vm:MainWindowViewModel/>
+    </Design.DataContext>
+
+    <Window.DataTemplates>
+	    <DataTemplate DataType="vm:AuthPageViewModel">
+            <View:AuthPageView/>
+        </DataTemplate>
+
+        <DataTemplate DataType="vm:MainPageViewModel">
+            <View:MainPageView/>
+        </DataTemplate>
+    </Window.DataTemplates>
+
+    <ContentControl Content="{Binding CurrentViewModel}"/>
+</Window>

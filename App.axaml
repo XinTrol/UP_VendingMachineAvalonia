@@ -2,12 +2,17 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="UP_4.App"
              xmlns:local="using:UP_4"
-             RequestedThemeVariant="Light">
+             RequestedThemeVariant="Light"
+             xmlns:lo="clr-namespace:UP_4.Converters">
              <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
 
     <Application.DataTemplates>
         <local:ViewLocator/>
     </Application.DataTemplates>
+
+    <Application.Resources>
+        <lo:Base64ToImageConverter x:Key="Base64ToImageConverter"/>
+    </Application.Resources>
   
     <Application.Styles>
         <FluentTheme />

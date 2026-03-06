@@ -18,7 +18,7 @@
                        Source="/Assets/Logo.png"/>
                 <Border Grid.Column="1">
                     <Grid ColumnDefinitions="30*, 70*">
-                        <Image Grid.Column="0" />
+                        <Image Grid.Column="0" Source="{Binding CurrentUser.Image, Converter={StaticResource Base64ToImageConverter}}"/>
                         <StackPanel Grid.Column="1" VerticalAlignment="Center">
 							<TextBlock Text="{Binding CurrentUser.ShortName}"/>
                             <TextBlock Text="{Binding CurrentUser.IdRoleNavigation.Name}"/>

@@ -7,8 +7,7 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="UP_4.Views.MainPageView"
              xmlns:vm="clr-namespace:UP_4.ViewModels"
-             x:DataType="vm:MainPageViewModel"
-             x:Name="Root">
+             x:DataType="vm:MainPageViewModel">
 
     <UserControl.Resources>
         <local:Base64ToImageConverter x:Key="Base64ToImageConverter"/>
@@ -63,26 +62,22 @@
                 </Style>
             </Border.Styles>
             <StackPanel Margin="10">
-                <Button Content="Главная"
-                        Margin="0,0,0,10"
-                        Width="230"
-                        Height="50"
-                        Foreground="White"
-                        Background="#171717"
-                        HorizontalContentAlignment="Left"
-                        VerticalContentAlignment="Center"
-                        Padding="15,0,0,0"/>
+               <Button Content="Главная"
+                       Command="{Binding GoToHomeCommand}"
+                       Margin="0,0,0,10"
+                       Width="230" Height="50"
+                       Foreground="White" Background="#171717"
+                       HorizontalContentAlignment="Left" VerticalContentAlignment="Center" Padding="15,0,0,0"/>
                 <Expander Header="Администрирование"
                           Width="230"
                           Foreground="White"
                           Background="#1d2127">
                     <StackPanel>
-                        <Button Content="Автоматы"
-                                Width="200"
-                                Margin="0,0,0,10"
-                                Foreground="White"
-                                Background="#171717"/>
-                        <Button Content="Пулеметы"
+                        <Button Content="Торговые автоматы"
+                                Command="{Binding GoToMachinesCommand}"
+                                Width="200" Margin="0,0,0,10"
+                                Foreground="White" Background="#171717"/>
+                        <Button Content="Список компаний"
                                 Width="200"
                                 Foreground="White"
                                 Background="#171717"/>

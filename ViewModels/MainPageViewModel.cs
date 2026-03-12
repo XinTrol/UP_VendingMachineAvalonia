@@ -17,7 +17,6 @@ namespace UP_4.ViewModels
 {
     public partial class MainPageViewModel : ViewModelBase
     {
-
         [ObservableProperty]
         private User currentUser;
 
@@ -59,6 +58,19 @@ namespace UP_4.ViewModels
             LoadNewsStub();
             LoadDataCommand = new AsyncRelayCommand(LoadDataAsync);
             LoadDataCommand.ExecuteAsync(null);
+        }
+
+        [RelayCommand]
+        private void GoToMachines()
+        {
+            MainWindowViewModel.Instance.CurrentViewModel = new VendingMachinesViewModel();
+        }
+
+       
+        [RelayCommand]
+        private void GoToHome()
+        {  
+            MainWindowViewModel.Instance.CurrentViewModel = new MainPageViewModel(CurrentUser);
         }
 
         private async Task LoadDataAsync()

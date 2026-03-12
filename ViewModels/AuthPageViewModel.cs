@@ -15,8 +15,6 @@ namespace UP_4.ViewModels
     {
         [ObservableProperty] string email = "";
         [ObservableProperty] string password = "";
-        [ObservableProperty] string kod_email = "";
-        [ObservableProperty] string kod_franch = "";
         [ObservableProperty] string message = "";
 
         [RelayCommand]

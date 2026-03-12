@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Tmds.DBus.Protocol;
 using UP_4.Models;
@@ -40,11 +41,23 @@ namespace UP_4.ViewModels
         public int CorrectAnswer { get; set; }
     }
 
+
     public partial class RegistrationPageViewModel : ViewModelBase
     {
-        [ObservableProperty] string email = "";
-        [ObservableProperty] string password = "";
-        [ObservableProperty] string message = "";
+
+        [ObservableProperty]
+        private string email = "";
+        [ObservableProperty]
+        private string password = "";
+        [ObservableProperty]
+        private string emailCode = "";
+        [ObservableProperty]
+        private string franchiseCode = "";
+        [ObservableProperty]
+        private string message = "";
+
+        private string generatedEmailCode = "";
+
         public ObservableCollection<MathExample> Examples { get; } = new();
 
         public RegistrationPageViewModel()
@@ -52,59 +65,77 @@ namespace UP_4.ViewModels
             GenerateExamples();
         }
 
-        void GenerateExamples()
+        private void GenerateEmailCode()
         {
-            Examples.Clear();
             Random rnd = new Random();
-            string chars = "-+*";
+            generatedEmailCode = rnd.Next(100000, 999999).ToString();
+        }
 
-            for (int i = 0; i < 3; i++)
+        [RelayCommand]
+        private void SendEmailCode()
+        {
+            if (string.IsNullOrWhiteSpace(Email))
             {
-                int a = rnd.Next(1, 100);
-                int b = rnd.Next(1, 100);
-                char c = chars[rnd.Next(chars.Length)];
-
-                var example = new MathExample();
-
-                switch (c)
-                {
-                    case '+':
-                        example.CorrectAnswer = a + b;
-                        break;
-                    case '-':
-                        example.CorrectAnswer = a - b;
-                        break;
-                    case '*':
-                        example.CorrectAnswer = a * b;
-                        break;
-                }
-
-                example.Expression = $"{a} {c} {b} = ";
-                Examples.Add(example);
+                Message = "Введите email";
+                return;
             }
 
+            if (!IsValidEmail(Email))
+            {
+                Message = "Некорректный email";
+                return;
+            }
+
+            GenerateEmailCode();
+            Message = $"Код подтверждения (эмуляция email): {generatedEmailCode}";
+        }
+
+        private void GenerateExamples()
+        {
+            Examples.Clear();
+
+            Random rnd = new Random();
+            string chars = "+-*";
+
+            int a = rnd.Next(1, 20);
+            int b = rnd.Next(1, 20);
+            int c = rnd.Next(1, 20);
+            int d = rnd.Next(1, 20);
+
+            char op1 = chars[rnd.Next(chars.Length)];
+            char op2 = chars[rnd.Next(chars.Length)];
+            char op3 = chars[rnd.Next(chars.Length)];
+
+            string expression = $"{a} {op1} {b} {op2} {c} {op3} {d}";
+
+            int result = (int)new System.Data.DataTable().Compute(expression, "");
+
+            Examples.Add(new MathExample
+            {
+                Expression = expression + " = ",
+                CorrectAnswer = result
+            });
         }
 
         private bool CheckAnswers()
         {
             foreach (var example in Examples)
             {
-
                 if (string.IsNullOrWhiteSpace(example.UserAnswer))
                 {
-                    Message = "Решите все примеры!";
+                    Message = "Решите CAPTCHA";
                     return false;
                 }
 
-                if (!int.TryParse(example.UserAnswer, out int userAnswer))
+                if (!int.TryParse(example.UserAnswer, out int ans))
                 {
-                    Message = $"В примере '{example.Expression}' введите число!";
+                    Message = "Введите число";
                     return false;
                 }
 
-                if (userAnswer != example.CorrectAnswer)
+                if (ans != example.CorrectAnswer)
                 {
-                    Message = $"Неверный ответ в примере '{example.Expression}'";
+                    Message = "CAPTCHA решена неверно";
                     return false;
                 }
             }
@@ -112,50 +143,91 @@ namespace UP_4.ViewModels
             return true;
         }
 
+        private bool IsValidEmail(string email)
+        {
+            return Regex.IsMatch(email, @"^[^@\s]+@[^@\s]+\.[^@\s]+$");
+        }
+
+        private bool IsValidPassword(string password)
+        {
+            return Regex.IsMatch(password, @"^(?=.*[0-9])(?=.*[!@#$%^&*]).{8,}$");
+        }
+
         private async Task Reg()
         {
-            
-            if (string.IsNullOrWhiteSpace(Email) || string.IsNullOrWhiteSpace(Password))
+            try
             {
-                Message = "Заполните все поля!";
-                return;
+                if (string.IsNullOrWhiteSpace(Email) ||
+                    string.IsNullOrWhiteSpace(Password) ||
+                    string.IsNullOrWhiteSpace(EmailCode) ||
+                    string.IsNullOrWhiteSpace(FranchiseCode))
+                {
+                    Message = "Заполните все поля";
+                    return;
+                }
+
+                if (!IsValidEmail(Email))
+                {
+                    Message = "Некорректный email";
+                    return;
+                }
+
+                if (!IsValidPassword(Password))
+                {
+                    Message = "Пароль минимум 8 символов, цифра и спецсимвол";
+                    return;
+                }
+
+                if (EmailCode != generatedEmailCode)
+                {
+                    Message = "Неверный код подтверждения email";
+                    return;
+                }
+
+                if (FranchiseCode != "FRANCH2025")
+                {
+                    Message = "Неверный код франчайзи";
+                    return;
+                }
+
+                if (!CheckAnswers())
+                    return;
+
+                var exists = await db.Users.AnyAsync(x => x.Email == Email);
+                if (exists)
+                {
+                    Message = "Пользователь уже существует";
+                    return;
+                }
+
+                var newUser = new User
+                {
+                    Email = Email,
+                    Password = Password,
+                    IdRole = 1
+                };
+
+                db.Users.Add(newUser);
+                await db.SaveChangesAsync();
+
+                Message = "Регистрация успешна";
+
+                MainWindowViewModel.Instance.CurrentViewModel = new MainPageViewModel(newUser);
             }
-
-            var exists = await db.Users.AnyAsync(d => d.Email == Email);
-            if (exists)
+            catch (Exception ex)
             {
-                Message = "Пользователь уже существует.";
-                return;
+                Message = $"Ошибка при регистрации: {ex.Message}";
             }
-
-            if (!CheckAnswers())
-                return;
-
-            var newUser = new User
-            {
-                Email = Email,
-                Password = Password,
-                IdRole = 1
-            };
-
-            db.Users.Add(newUser);
-            await db.SaveChangesAsync();
-
-            Message = "Регистрация успешна!";
-            Email = "";
-            Password = "";
-
-            GenerateExamples(); // Генерируем новые примеры
         }
 
         [RelayCommand]
-        public async Task RegistrationAdd()
+        private async Task RegistrationAdd()
         {
             await Reg();
         }
 
         [RelayCommand]
-        public async Task Back()
+        private void Back()
         {
             MainWindowViewModel.Instance.CurrentViewModel = new AuthPageViewModel();
         }

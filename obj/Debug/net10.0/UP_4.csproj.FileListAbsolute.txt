@@ -171,3 +171,7 @@ C:\Users\egors\OneDrive\Desktop\программирование\C#\UP_4\UP_4\bi
 C:\Users\egors\OneDrive\Desktop\программирование\C#\UP_4\UP_4\bin\Debug\net10.0\zh-Hans\Microsoft.CodeAnalysis.Workspaces.MSBuild.resources.dll
 C:\Users\egors\OneDrive\Desktop\программирование\C#\UP_4\UP_4\bin\Debug\net10.0\zh-Hant\Microsoft.CodeAnalysis.Workspaces.MSBuild.resources.dll
 C:\Users\egors\OneDrive\Desktop\программирование\C#\UP_4\UP_4\obj\Debug\net10.0\UP_4.sourcelink.json
+C:\Users\egors\OneDrive\Desktop\программирование\C#\UP_4\UP_4\bin\Debug\net10.0\LiveChartsCore.dll
+C:\Users\egors\OneDrive\Desktop\программирование\C#\UP_4\UP_4\bin\Debug\net10.0\LiveChartsCore.SkiaSharpView.dll
+C:\Users\egors\OneDrive\Desktop\программирование\C#\UP_4\UP_4\bin\Debug\net10.0\LiveChartsCore.SkiaSharpView.Avalonia.dll
+C:\Users\egors\OneDrive\Desktop\программирование\C#\UP_4\UP_4\bin\Debug\net10.0\SkiaSharp.HarfBuzz.dll

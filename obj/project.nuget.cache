@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "dniIpFnZ9/w=",
+  "dgSpecHash": "VPOzfq1YrKM=",
   "success": true,
   "projectFilePath": "C:\\Users\\egors\\OneDrive\\Desktop\\программирование\\C#\\UP_4\\UP_4\\UP_4.csproj",
   "expectedPackageFiles": [
@@ -26,6 +26,9 @@
     "C:\\Users\\egors\\.nuget\\packages\\harfbuzzsharp.nativeassets.webassembly\\8.3.1.1\\harfbuzzsharp.nativeassets.webassembly.8.3.1.1.nupkg.sha512",
     "C:\\Users\\egors\\.nuget\\packages\\harfbuzzsharp.nativeassets.win32\\8.3.1.1\\harfbuzzsharp.nativeassets.win32.8.3.1.1.nupkg.sha512",
     "C:\\Users\\egors\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
+    "C:\\Users\\egors\\.nuget\\packages\\livechartscore\\2.0.0-rc6.1\\livechartscore.2.0.0-rc6.1.nupkg.sha512",
+    "C:\\Users\\egors\\.nuget\\packages\\livechartscore.skiasharpview\\2.0.0-rc6.1\\livechartscore.skiasharpview.2.0.0-rc6.1.nupkg.sha512",
+    "C:\\Users\\egors\\.nuget\\packages\\livechartscore.skiasharpview.avalonia\\2.0.0-rc6.1\\livechartscore.skiasharpview.avalonia.2.0.0-rc6.1.nupkg.sha512",
     "C:\\Users\\egors\\.nuget\\packages\\microcom.runtime\\0.11.0\\microcom.runtime.0.11.0.nupkg.sha512",
     "C:\\Users\\egors\\.nuget\\packages\\microsoft.build.framework\\18.0.2\\microsoft.build.framework.18.0.2.nupkg.sha512",
     "C:\\Users\\egors\\.nuget\\packages\\microsoft.codeanalysis.analyzers\\3.11.0\\microsoft.codeanalysis.analyzers.3.11.0.nupkg.sha512",
@@ -56,6 +59,7 @@
     "C:\\Users\\egors\\.nuget\\packages\\npgsql\\10.0.0\\npgsql.10.0.0.nupkg.sha512",
     "C:\\Users\\egors\\.nuget\\packages\\npgsql.entityframeworkcore.postgresql\\10.0.0\\npgsql.entityframeworkcore.postgresql.10.0.0.nupkg.sha512",
     "C:\\Users\\egors\\.nuget\\packages\\skiasharp\\2.88.9\\skiasharp.2.88.9.nupkg.sha512",
+    "C:\\Users\\egors\\.nuget\\packages\\skiasharp.harfbuzz\\2.88.9\\skiasharp.harfbuzz.2.88.9.nupkg.sha512",
     "C:\\Users\\egors\\.nuget\\packages\\skiasharp.nativeassets.linux\\2.88.9\\skiasharp.nativeassets.linux.2.88.9.nupkg.sha512",
     "C:\\Users\\egors\\.nuget\\packages\\skiasharp.nativeassets.macos\\2.88.9\\skiasharp.nativeassets.macos.2.88.9.nupkg.sha512",
     "C:\\Users\\egors\\.nuget\\packages\\skiasharp.nativeassets.webassembly\\2.88.9\\skiasharp.nativeassets.webassembly.2.88.9.nupkg.sha512",

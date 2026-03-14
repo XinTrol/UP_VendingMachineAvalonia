@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Avalonia.Controls;
+using System;
 using System.Collections.Generic;
+using Tmds.DBus.Protocol;
 
 namespace UP_4.Models;
 
@@ -96,4 +98,6 @@ public partial class Machine
     public virtual User User { get; set; } = null!;
 
     public virtual Mode WorkModeNavigation { get; set; } = null!;
+
+    public string FullAddress => $"{Location}, {PlaceNavigation.Name}";
 }

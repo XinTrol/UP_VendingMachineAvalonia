@@ -13,8 +13,8 @@ namespace UP_4.ViewModels
 {
     public partial class AuthPageViewModel: ViewModelBase
     {
-        [ObservableProperty] string email = "";
-        [ObservableProperty] string password = "";
+        [ObservableProperty] string email = "kolbaska321@mail.ru";
+        [ObservableProperty] string password = "321";
         [ObservableProperty] string message = "";
 
         [RelayCommand]

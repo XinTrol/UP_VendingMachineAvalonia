@@ -63,7 +63,7 @@ namespace UP_4.ViewModels
         [RelayCommand]
         private void GoToMachines()
         {
-            MainWindowViewModel.Instance.CurrentViewModel = new VendingMachinesViewModel();
+            MainWindowViewModel.Instance.CurrentViewModel = new VendingMachinesViewModel(CurrentUser);
         }
 
        

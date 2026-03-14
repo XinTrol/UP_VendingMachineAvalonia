@@ -17,6 +17,10 @@ namespace UP_4.ViewModels
     public partial class VendingMachinesViewModel : ViewModelBase
     {
         [ObservableProperty] private bool _isTableView = true;
+
+        // ДОБАВЛЕНО: Свойство для режима Плитки
+        [ObservableProperty] private bool _isTileView = false;
+
         [ObservableProperty] private string _searchText = string.Empty;
         [ObservableProperty] private int _currentPage = 1;
         [ObservableProperty] private int _itemsPerPage = 10;
@@ -30,6 +34,9 @@ namespace UP_4.ViewModels
         public string ItemsInfo => $"Показано {DisplayedMachines.Count} из {TotalItems}";
         public int TotalPages => (int)Math.Ceiling((double)TotalItems / ItemsPerPage);
 
+        // Если db нет в ViewModelBase, раскомментируйте строку ниже:
+        // private readonly YourDbContext db = new YourDbContext(); 
+
         public VendingMachinesViewModel()
         {
             LoadDataCommand.Execute(null);
@@ -38,12 +45,34 @@ namespace UP_4.ViewModels
         [RelayCommand]
         private async Task LoadData()
         {
+            // Проверка на null для db (для безопасности)
+            if (db == null) return;
+
             _allMachinesCache = await db.Machines
                 .Include(m => m.ModelNavigation)
                 .Include(m => m.CompanyNavigation)
                 .Include(m => m.PlaceNavigation)
                 .ToListAsync();
             RefreshData();
+        }
+
+        // ДОБАВЛЕНО: Синхронизация переключателей
+        // Когда включаем Таблицу, выключаем Плитку
+        partial void OnIsTableViewChanged(bool value)
+        {
+            if (value && IsTileView)
+                IsTileView = false;
+            else if (!value && !IsTileView)
+                IsTileView = true;
+        }
+
+        // Когда включаем Плитку, выключаем Таблицу
+        partial void OnIsTileViewChanged(bool value)
+        {
+            if (value && IsTableView)
+                IsTableView = false;
+            else if (!value && !IsTableView)
+                IsTableView = true;
         }
 
         partial void OnSearchTextChanged(string value) => RefreshData();
@@ -82,12 +111,6 @@ namespace UP_4.ViewModels
         }
 
         [RelayCommand]
-        private void ToggleView(string viewMode)
-        {
-            IsTableView = viewMode == "Table";
-        }
-
-        [RelayCommand]
         private async Task ExportCsv()
         {
             if (App.Current.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop) return;
@@ -116,11 +139,11 @@ namespace UP_4.ViewModels
             }
         }
 
-        // ИСПРАВЛЕНО: Названия методов совпадают с CommandName в XAML
         [RelayCommand]
         private async Task DeleteMachine(Machine machine)
         {
             if (machine == null) return;
+            if (db == null) return;
 
             db.Machines.Remove(machine);
             await db.SaveChangesAsync();
@@ -133,6 +156,8 @@ namespace UP_4.ViewModels
         private async Task UnlinkModem(Machine machine)
         {
             if (machine == null) return;
+            if (db == null) return;
+
             machine.KitOnlineId = "Отвязан";
             db.Update(machine);
             await db.SaveChangesAsync();
@@ -143,6 +168,21 @@ namespace UP_4.ViewModels
         private void EditMachine(Machine machine)
         {
             // Логика редактирования
+        }
+
+        [ObservableProperty]
+        private User currentUser;
+
+        public VendingMachinesViewModel(User user)
+        {
+            CurrentUser = user;
+            LoadDataCommand.Execute(null);
+        }
+
+        [RelayCommand]
+        private void GoToHome()
+        {
+            MainWindowViewModel.Instance.CurrentViewModel = new MainPageViewModel(CurrentUser);
         }
 
         [RelayCommand]

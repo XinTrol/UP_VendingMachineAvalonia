@@ -1,141 +1,362 @@
 <UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="UP_4.Views.VendingMachinesView"
-             xmlns:vm="clr-namespace:UP_4.ViewModels"
-             x:DataType="vm:VendingMachinesViewModel">
+          xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+          xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+          xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+          xmlns:local="clr-namespace:UP_4.Converters"
+          xmlns:vm="clr-namespace:UP_4.ViewModels"
+          mc:Ignorable="d"
+          x:Class="UP_4.Views.VendingMachinesView"
+          x:DataType="vm:VendingMachinesViewModel">
 
-    <Grid Margin="20">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
+    <UserControl.Resources>
+        <local:Base64ToImageConverter x:Key="Base64ToImageConverter"/>
+    </UserControl.Resources>
 
-        <!-- 1. Панель управления -->
-        <StackPanel Grid.Row="0" Spacing="10" Margin="0,0,0,15">
-            <TextBlock Text="Торговые автоматы" FontSize="24" FontWeight="Bold"/>
-            
-            <DockPanel LastChildFill="True">
-                <StackPanel Orientation="Horizontal" Spacing="5" DockPanel.Dock="Right">
-                    <Button Content="Таблица" Command="{Binding ToggleViewCommand}" CommandParameter="Table" 
-                            IsEnabled="{Binding !IsTableView}"/>
-                    <Button Content="Плитка" Command="{Binding ToggleViewCommand}" CommandParameter="Tile" 
-                            IsEnabled="{Binding IsTableView}"/>
-                </StackPanel>
+    <Grid RowDefinitions="60,40,*" ColumnDefinitions="250,*">
 
-                <StackPanel Orientation="Horizontal" Spacing="10">
-                    <TextBox Watermark="Поиск по названию..." Text="{Binding SearchText, Mode=TwoWay}" Width="200"/>
-                    <Button Content="Экспорт в CSV" Command="{Binding ExportCsvCommand}"/>
-                </StackPanel>
-            </DockPanel>
-        </StackPanel>
+        <!-- Шапка -->
+        <Border Grid.Row="0" Grid.ColumnSpan="2" Background="White">
+            <Grid ColumnDefinitions="80*,20*">
+                <Image Grid.Column="0"
+                       HorizontalAlignment="Left"
+                       VerticalAlignment="Center"
+                       Margin="10,0,0,0"
+                       Source="/Assets/Logo.png"/>
 
-        <!-- 2. Область отображения данных -->
-        <Grid Grid.Row="1">
-           <!-- Режим Таблицы -->
-            <DataGrid Name="DgMachines" 
-                      ItemsSource="{Binding DisplayedMachines}" 
-                      IsVisible="{Binding IsTableView}"
-                      AutoGenerateColumns="False"
-                      IsReadOnly="True"
-                      GridLinesVisibility="All"
-                      BorderThickness="1"
-                      BorderBrush="Gray"
-                      SelectionMode="Single">
-            
-                <!-- Настройка чередующегося цвета строк через Стили -->
-                <DataGrid.Styles>
-                    <Style Selector="DataGridRow:nth-child(even)">
-                        <Setter Property="Background" Value="#F0F0F0"/>
-                    </Style>
-                </DataGrid.Styles>
-            
-                <DataGrid.Columns>
-                    <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="*"/>
-                    <DataGridTextColumn Header="Название автомата" Binding="{Binding Name}" Width="*"/>
-                    <DataGridTextColumn Header="Модель" Binding="{Binding ModelNavigation.Name}" Width="*"/>
-                    <DataGridTextColumn Header="Компания" Binding="{Binding CompanyNavigation.Name}" Width="*"/>
-                    <DataGridTextColumn Header="Модем" Binding="{Binding KitOnlineId}" Width="*"/>
-                    <DataGridTextColumn Header="Адрес/Место" Binding="{Binding PlaceNavigation.Name}" Width="*"/>
-                    <DataGridTextColumn Header="В работе с" Binding="{Binding InstallDate}" Width="*"/>
-            
-                    <!-- Колонка Действия -->
-                    <DataGridTemplateColumn Header="Действия" Width="200">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <StackPanel Orientation="Horizontal" Spacing="5">
-                                    <Button Content="✏️" ToolTip.Tip="Редактировать" 
-                                            Command="{Binding $parent[DataGrid].((vm:VendingMachinesViewModel)DataContext).EditMachineCommand}"
-                                            CommandParameter="{Binding}"/>
-                                    <Button Content="❌" ToolTip.Tip="Удалить" 
-                                            Command="{Binding $parent[DataGrid].((vm:VendingMachinesViewModel)DataContext).DeleteMachineCommand}"
-                                            CommandParameter="{Binding}"/>
-                                    <Button Content="📶" ToolTip.Tip="Отвязать модем" 
-                                            Command="{Binding $parent[DataGrid].((vm:VendingMachinesViewModel)DataContext).UnlinkModemCommand}"
-                                            CommandParameter="{Binding}"/>
-                                </StackPanel>
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                </DataGrid.Columns>
-            </DataGrid>
+                <Grid Grid.Column="1" ColumnDefinitions="30*,70*">
+                    <Image Grid.Column="0"
+                           Source="{Binding CurrentUser.Image, Converter={StaticResource Base64ToImageConverter}}"/>
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock Text="{Binding CurrentUser.ShortName}"/>
+                        <TextBlock Text="{Binding CurrentUser.IdRoleNavigation.Name}"/>
+                    </StackPanel>
+                </Grid>
+            </Grid>
+        </Border>
 
-            <!-- Режим Плитки -->
-            <ItemsControl ItemsSource="{Binding DisplayedMachines}" 
-                          IsVisible="{Binding !IsTableView}">
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <WrapPanel Orientation="Horizontal"/>
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Border Width="250" Height="180" Margin="10" Background="White" 
-                                BorderBrush="#DDD" BorderThickness="1" CornerRadius="5" 
-                                Padding="10">
-                            <StackPanel Spacing="5">
-                                <TextBlock Text="{Binding Name}" FontWeight="Bold" FontSize="16"/>
-                                <TextBlock Text="{Binding ModelNavigation.Name}" Foreground="Gray"/>
-                                <TextBlock Text="{Binding CompanyNavigation.Name}"/>
-                                <TextBlock Text="{Binding PlaceNavigation.Name}" TextWrapping="Wrap"/>
-                                
-                                <StackPanel Orientation="Horizontal" Spacing="5" Margin="0,10,0,0">
-                                    <Button Content="Редакт." 
-                                            Command="{Binding $parent[ItemsControl].((vm:VendingMachinesViewModel)DataContext).EditMachineCommand}"
-                                            CommandParameter="{Binding}"/>
-                                    <Button Content="Удалить" 
-                                            Command="{Binding $parent[ItemsControl].((vm:VendingMachinesViewModel)DataContext).DeleteMachineCommand}"
-                                            CommandParameter="{Binding}"/>
-                                </StackPanel>
-                            </StackPanel>
-                        </Border>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
+        <!-- Верхняя панель -->
+        <Grid Grid.Row="1" ColumnDefinitions="70*,30*">
+            <Border Grid.Column="0" Background="#1d2127">
+                <TextBlock Text="Навигация"
+                           VerticalAlignment="Center"
+                           Foreground="White"
+                           Padding="5"/>
+            </Border>
+            <Border Grid.Column="1" Background="#171717">
+                <TextBlock Text="☰"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           Foreground="White"/>
+            </Border>
         </Grid>
 
-        <!-- 3. Пагинация -->
-        <DockPanel Grid.Row="2" Margin="0,15,0,0" LastChildFill="False">
-            <TextBlock Text="{Binding ItemsInfo}" DockPanel.Dock="Left" VerticalAlignment="Center"/>
+        <!-- Левое меню -->
+        <Border Grid.Row="2" Grid.Column="0" Background="#1d2127">
+            <StackPanel Margin="10">
+                <Button Content="Главная"
+                        Command="{Binding GoToHomeCommand}"
+                        Margin="0,0,0,10"
+                        Width="230"
+                        Height="50"
+                        Foreground="White"
+                        Background="#171717"
+                        HorizontalContentAlignment="Left"
+                        Padding="15,0,0,0"/>
 
-            <StackPanel Orientation="Horizontal" Spacing="5" DockPanel.Dock="Left" Margin="20,0,0,0">
-                <TextBlock Text="Строк на странице:" VerticalAlignment="Center"/>
-                <ComboBox ItemsSource="{Binding ItemsPerPageOptions}" 
-                          SelectedItem="{Binding ItemsPerPage}"
-                          Width="60"/>
+                <Expander Header="Администрирование"
+                          Width="230"
+                          Foreground="White">
+                    <StackPanel>
+                        <Button Content="Торговые автоматы"
+                                Width="200"
+                                Margin="0,0,0,10"
+                                Foreground="White"
+                                Background="#171717"/>
+                        <Button Content="Список компаний"
+                                Width="200"
+                                Foreground="White"
+                                Background="#171717"/>
+                    </StackPanel>
+                </Expander>
             </StackPanel>
+        </Border>
 
-            <StackPanel Orientation="Horizontal" Spacing="5" DockPanel.Dock="Right">
-                <!-- ИСПРАВЛЕНО: Заменены спецсимволы < и > -->
-                <Button Content="&lt;" Command="{Binding PrevPageCommand}"/>
-                <TextBlock Text="{Binding CurrentPage}" VerticalAlignment="Center" Margin="5,0"/>
-                <TextBlock Text="/" VerticalAlignment="Center"/>
-                <TextBlock VerticalAlignment="Center" Text="{Binding TotalPages}"/>
-                <Button Content="&gt;" Command="{Binding NextPageCommand}"/>
-            </StackPanel>
-        </DockPanel>
+        <!-- Верх правой части -->
+        <Border Grid.Row="1" Grid.Column="1" Background="#171717">
+            <Grid ColumnDefinitions="*, 300">
+                <TextBlock Text="ООО Торговые Автоматы"
+                           Grid.Column="0"
+                           VerticalAlignment="Center"
+                           Padding="5"
+                           Foreground="White"/>
+                <TextBlock Text="Администрирование / Торговые автоматы"
+                           Grid.Column="1"
+                           HorizontalAlignment="Right"
+                           VerticalAlignment="Center"
+                           Margin="0,0,10,0"
+                           Foreground="Gray"/>
+            </Grid>
+        </Border>
+
+        <!-- Основной контент -->
+        <Border Grid.Row="2" Grid.Column="1" Background="#d9d9d9">
+            <Grid RowDefinitions="Auto,*">
+                <Border Grid.Row="1"
+                        Background="White"
+                        CornerRadius="6"
+                        Padding="10"
+                        Margin="10">
+
+                    <Grid RowDefinitions="Auto,Auto,*,Auto">
+
+                        <!-- Заголовок страницы -->
+                        <StackPanel Grid.Row="0" Margin="0,0,0,10">
+                            <TextBlock Text="Торговые автоматы"
+                                       FontSize="20"
+                                       FontWeight="Bold"
+                                       Foreground="SkyBlue"/>
+                            <TextBlock Text="{Binding ItemsInfo}"
+                                       Foreground="Black"/>
+                        </StackPanel>
+
+                        <!-- Панель управления -->
+                        <DockPanel Grid.Row="1" Margin="0,0,0,10">
+
+                            <StackPanel Orientation="Horizontal"
+                                        DockPanel.Dock="Right"
+                                        Spacing="10">
+                                <Button Content="+ Добавить"/>
+                                <Button Content="Экспорт"
+                                        Command="{Binding ExportCsvCommand}"/>
+                            </StackPanel>
+
+                            <StackPanel Orientation="Horizontal" Spacing="10">
+                                
+                                <!-- ИСПРАВЛЕНО: Переключатели возвращены в панель управления -->
+                                <StackPanel Orientation="Horizontal" Spacing="2" >
+                                    <ToggleButton Content="Таблица" 
+                                                  IsChecked="{Binding IsTableView}"
+                                                  Padding="10,2"/>
+                                    <ToggleButton Content="Плитка" 
+                                                  IsChecked="{Binding IsTileView}"
+                                                  Padding="10,2"/>
+                                </StackPanel>
+
+                                <ComboBox Width="70"
+                                          ItemsSource="{Binding ItemsPerPageOptions}"
+                                          SelectedItem="{Binding ItemsPerPage}"/>
+                                <TextBlock Text="записей"
+                                           VerticalAlignment="Center"/>
+                                <TextBox Width="220"
+                                         Watermark="Фильтр"
+                                         Text="{Binding SearchText}"/>
+                            </StackPanel>
+                        </DockPanel>
+
+                        <!-- Контент: Таблица или Плитка -->
+                        <Grid Grid.Row="2">
+                            
+                            <!-- ТАБЛИЦА -->
+                            <DataGrid ItemsSource="{Binding DisplayedMachines}"
+                                      AutoGenerateColumns="False"
+                                      IsReadOnly="True"
+                                      GridLinesVisibility="All"
+                                      BorderBrush="#d0d0d0"
+                                      BorderThickness="1"
+                                      RowHeight="NaN" 
+                                      ColumnHeaderHeight="40"
+                                      IsVisible="{Binding IsTableView}"> <!-- Убрали AlternatingRowBackground отсюда -->
+                            
+                                <DataGrid.Styles>
+                                    <!-- Стиль для заголовков -->
+                                    <Style Selector="DataGridColumnHeader">
+                                        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                                        <Setter Property="VerticalContentAlignment" Value="Center"/>
+                                        <Setter Property="Background" Value="#F0F0F0"/>
+                                        <Setter Property="FontWeight" Value="Bold"/>
+                                    </Style>
+                                    
+                                    <!-- ДОБАВЛЕНО: Стиль для чередования цветов строк (вместо удаленного свойства) -->
+                                    <Style Selector="DataGridRow:nth-child(even)">
+                                        <Setter Property="Background" Value="#F5F5F5"/>
+                                    </Style>
+                                </DataGrid.Styles>
+                            
+                                <DataGrid.Columns>
+                                   
+                                    <!-- ID -->
+                                    <DataGridTemplateColumn Header="ID" Width="80">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding Id}" 
+                                                           HorizontalAlignment="Center" 
+                                                           VerticalAlignment="Center"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                            
+                                    <!-- Название -->
+                                    <DataGridTemplateColumn Header="Название" Width="200">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding Name}"
+                                                           Foreground="SkyBlue"
+                                                           TextWrapping="Wrap"
+                                                           HorizontalAlignment="Center"
+                                                           VerticalAlignment="Center"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                            
+                                    <!-- Модель -->
+                                    <DataGridTemplateColumn Header="Модель" Width="180">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding ModelNavigation.Name}"
+                                                           TextWrapping="Wrap"
+                                                           HorizontalAlignment="Center"
+                                                           VerticalAlignment="Center"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                            
+                                    <!-- Компания -->
+                                    <DataGridTemplateColumn Header="Компания" Width="180">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding CompanyNavigation.Name}"
+                                                           Foreground="SkyBlue"
+                                                           TextWrapping="Wrap"
+                                                           HorizontalAlignment="Center"
+                                                           VerticalAlignment="Center"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                            
+                                    <!-- Модем -->
+                                    <DataGridTemplateColumn Header="Модем" Width="140">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding KitOnlineId}" 
+                                                           HorizontalAlignment="Center" 
+                                                           VerticalAlignment="Center"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                            
+                                    <!-- Адрес (ИСПРАВЛЕНО: Binding PlaceNavigation.Name) -->
+                                    <DataGridTemplateColumn Header="Адрес" Width="*">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding PlaceNavigation.Name}"
+                                                           TextWrapping="Wrap"
+                                                           HorizontalAlignment="Center"
+                                                           VerticalAlignment="Center"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                            
+                                    <!-- В работе с -->
+                                    <DataGridTemplateColumn Header="В работе с" Width="130">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding InstallDate, StringFormat='{}{0:dd.MM.yyyy}'}" 
+                                                           HorizontalAlignment="Center" 
+                                                           VerticalAlignment="Center"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                            
+                                    <!-- Действия -->
+                                    <DataGridTemplateColumn Header="Действия" Width="130">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                    <Button Width="26" Height="26"
+                                                            Command="{Binding $parent[DataGrid].((vm:VendingMachinesViewModel)DataContext).EditMachineCommand}"
+                                                            CommandParameter="{Binding}">
+                                                        <TextBlock Text="✏"/>
+                                                    </Button>
+                                                    <Button Width="26" Height="26"
+                                                            Command="{Binding $parent[DataGrid].((vm:VendingMachinesViewModel)DataContext).DeleteMachineCommand}"
+                                                            CommandParameter="{Binding}">
+                                                        <TextBlock Text="🗑"/>
+                                                    </Button>
+                                                    <Button Width="26" Height="26"
+                                                            Command="{Binding $parent[DataGrid].((vm:VendingMachinesViewModel)DataContext).UnlinkModemCommand}"
+                                                            CommandParameter="{Binding}">
+                                                        <TextBlock Text="📡"/>
+                                                    </Button>
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                            
+                                </DataGrid.Columns>
+                            </DataGrid>
+
+                            <!-- ПЛИТКА -->
+                            <ScrollViewer IsVisible="{Binding IsTileView}">
+                                <ItemsControl ItemsSource="{Binding DisplayedMachines}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <WrapPanel Orientation="Horizontal"/>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Width="200" Height="180" Margin="10" Background="White" 
+                                                    CornerRadius="8" BorderBrush="#E0E0E0" BorderThickness="1"
+                                                    Padding="10">
+                                                <StackPanel Spacing="5">
+                                                    <TextBlock Text="{Binding Name}" FontWeight="Bold" FontSize="14" TextWrapping="Wrap" Foreground="SkyBlue"/>
+                                                    <TextBlock Text="{Binding ModelNavigation.Name}" Foreground="Gray"/>
+                                                    <TextBlock Text="{Binding PlaceNavigation.Name}" TextWrapping="Wrap" MaxHeight="50"/>
+                                                    <StackPanel Orientation="Horizontal" Spacing="5" Margin="0,5,0,0">
+                                                        <Button Content="✏" Width="30" Height="25"
+                                                                Command="{Binding $parent[ItemsControl].((vm:VendingMachinesViewModel)DataContext).EditMachineCommand}"
+                                                                CommandParameter="{Binding}"/>
+                                                        <Button Content="🗑" Width="30" Height="25"
+                                                                Command="{Binding $parent[ItemsControl].((vm:VendingMachinesViewModel)DataContext).DeleteMachineCommand}"
+                                                                CommandParameter="{Binding}"/>
+                                                    </StackPanel>
+                                                </StackPanel>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </ScrollViewer>
+                        </Grid>
+
+                        <!-- Пагинация -->
+                        <DockPanel Grid.Row="3"
+                                   Margin="0,10,0,0"
+                                   LastChildFill="False">
+
+                            <TextBlock Text="{Binding ItemsInfo}"
+                                       DockPanel.Dock="Left"
+                                       Foreground="Gray"
+                                       VerticalAlignment="Center"/>
+
+                            <StackPanel Orientation="Horizontal"
+                                        DockPanel.Dock="Right"
+                                        Spacing="5">
+                                <Button Content="&lt;"
+                                        Command="{Binding PrevPageCommand}"/>
+                                <TextBlock Text="{Binding CurrentPage}"
+                                           VerticalAlignment="Center"
+                                           Margin="5,0"/>
+                                <TextBlock Text="/"
+                                           VerticalAlignment="Center"/>
+                                <TextBlock Text="{Binding TotalPages}"
+                                           VerticalAlignment="Center"/>
+                                <Button Content="&gt;"
+                                        Command="{Binding NextPageCommand}"/>
+                            </StackPanel>
+                        </DockPanel>
+                    </Grid>
+                </Border>
+            </Grid>
+        </Border>
     </Grid>
 </UserControl>

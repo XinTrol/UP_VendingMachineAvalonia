@@ -47,4 +47,6 @@ public partial class User
     {
         return string.IsNullOrEmpty(name) ? "" : name[0].ToString().ToUpper();
     }
+
+    public string FullName => $"{Surname} {Name} {Patronymic}".Trim();
 }

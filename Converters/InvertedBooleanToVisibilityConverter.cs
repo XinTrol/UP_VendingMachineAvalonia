@@ -8,12 +8,21 @@ namespace UP_4.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return value is bool b ? !b : false;
+            if (value is bool boolValue)
+            {
+                // Если параметр "Invert" – возвращаем противоположное значение
+                if (parameter is string param && param == "Invert")
+                    return !boolValue;
+
+                // Иначе возвращаем само значение (используется для кнопки "По количеству")
+                return boolValue;
+            }
+            return false;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return value is bool b ? !b : false;
+            throw new NotSupportedException();
         }
     }
 }

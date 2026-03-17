@@ -1,22 +1,24 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using LiveChartsCore;
+using LiveChartsCore.Measure;
 using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Extensions;
 using LiveChartsCore.SkiaSharpView.Painting;
 using Microsoft.EntityFrameworkCore;
 using SkiaSharp;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using UP_4.Models;
-using LiveChartsCore.Measure;
 
 namespace UP_4.ViewModels
 {
     public partial class MainPageViewModel : ViewModelBase
     {
+
         [ObservableProperty]
         private User currentUser;
 
@@ -49,6 +51,16 @@ namespace UP_4.ViewModels
         [ObservableProperty]
         private ObservableCollection<NewsItem> news = new();
 
+        // Свойства для графика продаж (столбчатая диаграмма)
+        [ObservableProperty]
+        private IEnumerable<ISeries> salesSeries;
+
+        [ObservableProperty]
+        private Axis[] salesXAxes;
+
+        [ObservableProperty]
+        private Axis[] salesYAxes;
+
         public IAsyncRelayCommand LoadDataCommand { get; }
 
         public MainPageViewModel(User user)
@@ -66,10 +78,9 @@ namespace UP_4.ViewModels
             MainWindowViewModel.Instance.CurrentViewModel = new VendingMachinesViewModel(CurrentUser);
         }
 
-       
         [RelayCommand]
         private void GoToHome()
-        {  
+        {
             MainWindowViewModel.Instance.CurrentViewModel = new MainPageViewModel(CurrentUser);
         }
 
@@ -93,7 +104,7 @@ namespace UP_4.ViewModels
                 NetworkStatus.UnderMaintenance = machines.Count(m => m.Status == maintenanceStatusId);
                 NetworkStatus.Total = totalMachines;
 
-                // Блок 1: Спидометр (одна серия с настройками)
+                // Блок 1: Спидометр (кольцо)
                 GaugeSeries = new ObservableCollection<ISeries>
                 {
                     new PieSeries<double>
@@ -164,10 +175,14 @@ namespace UP_4.ViewModels
                 SalesData.Clear();
                 foreach (var item in salesByDay)
                     SalesData.Add(item);
+
+                // После заполнения данных по продажам обновляем график
+                UpdateSalesSeries();
             }
             catch (Exception ex)
             {
-                // Логирование
+                // Логирование ошибки
+                System.Diagnostics.Debug.WriteLine($"Ошибка загрузки данных: {ex.Message}");
             }
         }
 
@@ -193,10 +208,85 @@ namespace UP_4.ViewModels
             });
         }
 
+        // Две отдельные команды для переключения фильтра
         [RelayCommand]
-        private void ToggleFilter()
+        private void ShowQuantity()
         {
-            IsAmountFilter = !IsAmountFilter;
+            IsAmountFilter = true;
+            UpdateSalesSeries();
+        }
+
+        [RelayCommand]
+        private void ShowAmount()
+        {
+            IsAmountFilter = false;
+            UpdateSalesSeries();
+        }
+
+        // Обновление серий графика продаж
+        private void UpdateSalesSeries()
+        {
+            if (SalesData == null || SalesData.Count == 0)
+            {
+                // Если данных нет, можно создать тестовые для отладки (раскомментировать при необходимости)
+                // SalesData = new ObservableCollection<SalesPoint>(GetTestData());
+                SalesSeries = Array.Empty<ISeries>();
+                return;
+            }
+
+            // Выбираем данные в зависимости от фильтра (количество или сумма)
+            var values = IsAmountFilter
+                ? SalesData.Select(x => (double)x.Quantity).ToArray()
+                : SalesData.Select(x => (double)x.Amount).ToArray();
+
+            SalesSeries = new ObservableCollection<ISeries>
+            {
+                new ColumnSeries<double>
+                {
+                    Values = values,
+                    Fill = new SolidColorPaint(SKColors.Blue),
+                    Stroke = null,
+                    Name = IsAmountFilter ? "Количество" : "Сумма, руб"
+                }
+            };
+
+            // Настройка оси X (даты)
+            SalesXAxes = new[]
+            {
+                new Axis
+                {
+                    Labels = SalesData.Select(x => x.Date.ToString("dd.MM")).ToArray(),
+                    LabelsRotation = 45,
+                    SeparatorsPaint = new SolidColorPaint(SKColors.LightGray) { StrokeThickness = 0.5f }
+                }
+            };
+
+            // Настройка оси Y (подпись зависит от фильтра)
+            SalesYAxes = new[]
+            {
+                new Axis
+                {
+                    Name = IsAmountFilter ? "Количество" : "Сумма, руб",
+                    SeparatorsPaint = new SolidColorPaint(SKColors.LightGray) { StrokeThickness = 0.5f }
+                }
+            };
+        }
+
+        // Вспомогательный метод для тестовых данных
+        private List<SalesPoint> GetTestData()
+        {
+            var list = new List<SalesPoint>();
+            var rnd = new Random();
+            for (int i = 9; i >= 0; i--)
+            {
+                list.Add(new SalesPoint
+                {
+                    Date = DateTime.Today.AddDays(-i),
+                    Amount = rnd.Next(500, 2000),
+                    Quantity = rnd.Next(5, 30)
+                });
+            }
+            return list;
         }
     }
 

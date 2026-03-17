@@ -16,7 +16,7 @@
 
     <Grid RowDefinitions="60, 40, *" ColumnDefinitions="250, *">
 
-        <!-- Шапка -->
+        <!-- Шапка (без изменений) -->
         <Border Grid.Row="0" Grid.ColumnSpan="2" Background="White">
             <Grid ColumnDefinitions="80*, 20*">
                 <Image Grid.Column="0"
@@ -36,7 +36,7 @@
             </Grid>
         </Border>
 
-        <!-- Верхняя панель -->
+        <!-- Верхняя панель (без изменений) -->
         <Grid Grid.Row="1" ColumnDefinitions="70*, 30*">
             <Border Grid.Column="0" Background="#1d2127">
                 <TextBlock Text="Навигация"
@@ -53,7 +53,7 @@
             </Border>
         </Grid>
 
-        <!-- Левое меню -->
+        <!-- Левое меню (без изменений) -->
         <Border Grid.Column="0" Grid.Row="2" Background="#1d2127">
             <Border.Styles>
                 <Style Selector="Expander /template/ ToggleButton">
@@ -62,12 +62,12 @@
                 </Style>
             </Border.Styles>
             <StackPanel Margin="10">
-               <Button Content="Главная"
-                       Command="{Binding GoToHomeCommand}"
-                       Margin="0,0,0,10"
-                       Width="230" Height="50"
-                       Foreground="White" Background="#171717"
-                       HorizontalContentAlignment="Left" VerticalContentAlignment="Center" Padding="15,0,0,0"/>
+                <Button Content="Главная"
+                        Command="{Binding GoToHomeCommand}"
+                        Margin="0,0,0,10"
+                        Width="230" Height="50"
+                        Foreground="White" Background="#171717"
+                        HorizontalContentAlignment="Left" VerticalContentAlignment="Center" Padding="15,0,0,0"/>
                 <Expander Header="Администрирование"
                           Width="230"
                           Foreground="White"
@@ -86,7 +86,7 @@
             </StackPanel>
         </Border>
 
-        <!-- Верхняя часть правой колонки -->
+        <!-- Верхняя часть правой колонки (без изменений) -->
         <Border Grid.Row="1" Grid.Column="1" Background="#171717">
             <Grid ColumnDefinitions="80*, 20*">
                 <TextBlock Text="ООО Торговые Автоматы"
@@ -104,110 +104,189 @@
             </Grid>
         </Border>
 
-        <!-- Основная область контента -->
-        <Border Grid.Row="2" Grid.Column="1" Background="#d9d9d9">
-            <Grid RowDefinitions="50, *">
-                <Border Grid.Row="0" Background="#d9d9d9">
-                    <TextBlock Text="Личный кабинет. Главная"
-                               HorizontalAlignment="Left"
-                               VerticalAlignment="Center"
-                               Padding="15"/>
+<!-- ========== ОСНОВНАЯ ОБЛАСТЬ КОНТЕНТА (ИСПРАВЛЕННАЯ) ========== -->
+<Border Grid.Row="2" Grid.Column="1" Background="#d9d9d9">
+    <Grid RowDefinitions="50, *">
+        <!-- Заголовок страницы -->
+        <Border Grid.Row="0" Background="#d9d9d9">
+            <TextBlock Text="Личный кабинет. Главная"
+                       HorizontalAlignment="Left"
+                       VerticalAlignment="Center"
+                       Padding="15"/>
+        </Border>
+
+        <!-- Скроллер с карточками в сетке -->
+        <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+            <Grid Margin="20" RowDefinitions="Auto, Auto" ColumnDefinitions="*,*,*" RowSpacing="20" ColumnSpacing="20">
+
+                <!-- Блок 1: Эффективность сети -->
+                <Border Grid.Row="0" Grid.Column="0" Background="White" CornerRadius="5" Padding="15">
+                    <StackPanel>
+                        <TextBlock Text="Эффективность сети"
+                                   FontWeight="Bold" FontSize="14"
+                                   Foreground="#2c3e50"
+                                   HorizontalAlignment="Center"
+                                   Margin="0,0,0,5"/>
+                        <TextBlock Text="{Binding NetworkEfficiency, StringFormat='Работающих автоматов - {0:F0}%'}"
+                                   Foreground="#7f8c8d" FontSize="12"
+                                   HorizontalAlignment="Center"
+                                   Margin="0,0,0,10"/>
+                        <Grid Height="150" Width="150" HorizontalAlignment="Center">
+                            <lvc:PieChart Series="{Binding GaugeSeries}" Height="150" Width="150"/>
+                            <TextBlock Text="{Binding NetworkEfficiency, StringFormat='{}{0:F0}%'}"
+                                       FontSize="20" FontWeight="Bold"
+                                       Foreground="#2c3e50"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"/>
+                        </Grid>
+                    </StackPanel>
                 </Border>
 
-                <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
-                    <Grid RowDefinitions="Auto, Auto" ColumnDefinitions="*, *, *" Margin="10" RowSpacing="10" ColumnSpacing="10">
-
-                        <!-- Блок 1: Эффективность сети (спидометр) -->
-                        <Border Grid.Row="0" Grid.Column="0" Background="White" CornerRadius="8" Padding="10">
-                            <StackPanel>
-                                <TextBlock Text="Эффективность сети" FontWeight="Bold" FontSize="16" Margin="0,0,0,10"/>
-                                <lvc:PieChart Series="{Binding GaugeSeries}"
-                                              MaxAngle="180" 
-                                              InitialRotation="180"
-                                              Height="150" 
-                                              Width="150"
-                                              HorizontalAlignment="Center"/>
-                                <TextBlock Text="{Binding NetworkEfficiency, StringFormat='{}{0:F1}% работающих автоматов'}"
-                                           FontSize="14" Foreground="Gray" HorizontalAlignment="Center" Margin="0,10,0,0"/>
+                <!-- Блок 2: Состояние сети -->
+                <Border Grid.Row="0" Grid.Column="1" Background="White" CornerRadius="5" Padding="15">
+                    <StackPanel>
+                        <TextBlock Text="Состояние сети"
+                                   FontWeight="Bold" FontSize="14"
+                                   Foreground="#2c3e50"
+                                   HorizontalAlignment="Center"
+                                   Margin="0,0,0,10"/>
+                        <lvc:PieChart Series="{Binding PieSeries}"
+                                      Height="150" Width="150"
+                                      HorizontalAlignment="Center"/>
+                        <StackPanel Orientation="Horizontal"
+                                    HorizontalAlignment="Center"
+                                    Spacing="15"
+                                    Margin="0,10,0,0">
+                            <StackPanel Orientation="Horizontal" Spacing="5">
+                                <Border Background="#2ecc71" Width="12" Height="12" CornerRadius="2"/>
+                                <TextBlock Text="Работают" FontSize="10" Foreground="#7f8c8d"/>
                             </StackPanel>
-                        </Border>
+                            <StackPanel Orientation="Horizontal" Spacing="5">
+                                <Border Background="#f39c12" Width="12" Height="12" CornerRadius="2"/>
+                                <TextBlock Text="Обслуживание" FontSize="10" Foreground="#7f8c8d"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Spacing="5">
+                                <Border Background="#e74c3c" Width="12" Height="12" CornerRadius="2"/>
+                                <TextBlock Text="Сломаны" FontSize="10" Foreground="#7f8c8d"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- Блок 3: Сводка -->
+                <Border Grid.Row="0" Grid.Column="2" Background="White" CornerRadius="5" Padding="15">
+                    <StackPanel>
+                        <TextBlock Text="Сводка"
+                                   FontWeight="Bold" FontSize="14"
+                                   Foreground="#2c3e50"
+                                   HorizontalAlignment="Center"
+                                   Margin="0,0,0,15"/>
+                        <Grid Margin="0,0,0,8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="Продажи всего" Foreground="#34495e"/>
+                            <TextBlock Grid.Column="1" Text="{Binding SummaryData.TotalSales, StringFormat='{}{0:N2} ₽'}" 
+                                       Foreground="#2c3e50" FontWeight="Bold"/>
+                        </Grid>
+                        <Grid Margin="0,0,0,8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="Инкассация сегодня" Foreground="#34495e"/>
+                            <TextBlock Grid.Column="1" Text="{Binding SummaryData.CashCollection, StringFormat='{}{0:N2} ₽'}" 
+                                       Foreground="#2c3e50" FontWeight="Bold"/>
+                        </Grid>
+                        <Grid Margin="0,0,0,8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="ТА на обслуживании" Foreground="#34495e"/>
+                            <TextBlock Grid.Column="1" Text="{Binding SummaryData.MachinesUnderMaintenance}" 
+                                       Foreground="#2c3e50" FontWeight="Bold"/>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <!-- Блок 4: Динамика продаж (занимает две колонки) -->
+                <Border Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Background="White" CornerRadius="5" Padding="15" MinHeight="460">
+                    <Grid RowDefinitions="Auto, Auto, Auto, *">
+                        <TextBlock Grid.Row="0"
+                                   Text="Динамика продаж за последние 10 дней"
+                                   FontWeight="Bold" FontSize="14"
+                                   Foreground="#2c3e50"
+                                   HorizontalAlignment="Center"
+                                   Margin="0,0,0,5"/>
+                        <TextBlock Grid.Row="1"
+                                   Text="Данные по продажам за последние 10 дней"
+                                   Foreground="#7f8c8d" FontSize="11"
+                                   HorizontalAlignment="Center"
+                                   Margin="0,0,0,10"/>
                         
-                        <!-- Блок 2: Состояние сети (круговая диаграмма) -->
-                        <Border Grid.Row="0" Grid.Column="1" Background="White" CornerRadius="8" Padding="10">
-                            <StackPanel>
-                                <TextBlock Text="Состояние сети" FontWeight="Bold" FontSize="16" Margin="0,0,0,10"/>
-                                <lvc:PieChart Series="{Binding PieSeries}"
-                                              Height="150" Width="150"
-                                              HorizontalAlignment="Center"/>
-                                <Grid Margin="0,10,0,0" ColumnDefinitions="*,*,*">
-                                    <StackPanel Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Center">
-                                        <Rectangle Fill="Green" Width="12" Height="12" Margin="0,0,4,0"/>
-                                        <TextBlock Text="Работает"/>
-                                    </StackPanel>
-                                    <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center">
-                                        <Rectangle Fill="Red" Width="12" Height="12" Margin="0,0,4,0"/>
-                                        <TextBlock Text="Не работает"/>
-                                    </StackPanel>
-                                    <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Center">
-                                        <Rectangle Fill="Orange" Width="12" Height="12" Margin="0,0,4,0"/>
-                                        <TextBlock Text="Обслуживание"/>
-                                    </StackPanel>
-                                </Grid>
-                            </StackPanel>
-                        </Border>
-
-                        <!-- Блок 3: Сводка -->
-                        <Border Grid.Row="0" Grid.Column="2" Background="White" CornerRadius="8" Padding="10">
-                            <StackPanel>
-                                <TextBlock Text="Сводка" FontWeight="Bold" FontSize="16" Margin="0,0,0,10"/>
-                                <Grid RowDefinitions="Auto, Auto, Auto">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition Width="*"/>
-                                    </Grid.ColumnDefinitions>
-                                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Продажи:"/>
-                                    <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding SummaryData.TotalSales, StringFormat='{}{0:N2} руб'}" 
-                                               HorizontalAlignment="Right" FontWeight="Bold"/>
-                                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Инкассация:"/>
-                                    <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding SummaryData.CashCollection, StringFormat='{}{0:N2} руб'}" 
-                                               HorizontalAlignment="Right" FontWeight="Bold"/>
-                                    <TextBlock Grid.Row="2" Grid.Column="0" Text="ТА на обслуживании:"/>
-                                    <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding SummaryData.MachinesUnderMaintenance}" 
-                                               HorizontalAlignment="Right" FontWeight="Bold"/>
-                                </Grid>
-                            </StackPanel>
-                        </Border>
-
-                        <!-- Блок 4: Динамика продаж -->
-                        <Border Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Background="White" CornerRadius="8" Padding="10">
-                            <StackPanel>
-                                
-                            </StackPanel>
-                        </Border>
-
-                        <!-- Блок 5: Новости -->
-                        <Border Grid.Row="1" Grid.Column="2" Background="White" CornerRadius="8" Padding="10">
-                            <StackPanel>
-                                <TextBlock Text="Новости" FontWeight="Bold" FontSize="16" Margin="0,0,0,10"/>
-                                <ListBox ItemsSource="{Binding News}" Background="Transparent" BorderThickness="0" MaxHeight="200">
-                                    <ListBox.ItemTemplate>
-                                        <DataTemplate>
-                                            <Border BorderBrush="LightGray" BorderThickness="0,0,0,1" Padding="5">
-                                                <StackPanel>
-                                                    <TextBlock Text="{Binding Title}" FontWeight="Bold"/>
-                                                    <TextBlock Text="{Binding Content}" TextWrapping="Wrap"/>
-                                                    <TextBlock Text="{Binding PublishDate, StringFormat='dd.MM.yyyy'}" FontSize="10" Foreground="Gray"/>
-                                                </StackPanel>
-                                            </Border>
-                                        </DataTemplate>
-                                    </ListBox.ItemTemplate>
-                                </ListBox>
-                            </StackPanel>
-                        </Border>
-
+                        <StackPanel Grid.Row="2"
+                                    Orientation="Horizontal"
+                                    HorizontalAlignment="Center"
+                                    Margin="0,0,0,15">
+                            
+                            <Button Margin="5"
+                                    Padding="15,8"
+                                    Background="{Binding IsAmountFilter, Converter={StaticResource InvertBool}}"
+                                    Command="{Binding ShowQuantityCommand}">
+                                <TextBlock Text="По количеству" Foreground="White"/>
+                            </Button>
+                            
+                            <Button Margin="5"
+                                    Padding="15,8"
+                                    Background="{Binding IsAmountFilter, Converter={StaticResource InvertBool}, ConverterParameter=Invert}"
+                                    Command="{Binding ShowAmountCommand}">
+                                <TextBlock Text="По сумме" Foreground="White"/>
+                            </Button>
+                        </StackPanel>
+                        
+                        <lvc:CartesianChart Grid.Row="3"
+                                            Series="{Binding SalesSeries}"
+                                            XAxes="{Binding SalesXAxes}"
+                                            YAxes="{Binding SalesYAxes}"
+                                            Height="200"/>
                     </Grid>
-                </ScrollViewer>
+                </Border>
+
+                <!-- Блок 5: Новости -->
+                <Border Grid.Row="1" Grid.Column="2" Background="White" CornerRadius="5" Padding="15" MinHeight="220">
+                    <StackPanel>
+                        <TextBlock Text="Новости"
+                                   FontWeight="Bold" FontSize="14"
+                                   Foreground="#2c3e50"
+                                   HorizontalAlignment="Center"
+                                   Margin="0,0,0,20"/>
+                        <ItemsControl ItemsSource="{Binding News}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Margin="0,0,0,12">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0"
+                                                   Text="{Binding PublishDate, StringFormat='dd.MM.yyyy'}"
+                                                   Foreground="#7f8c8d" FontSize="12"
+                                                   Margin="0,0,10,0"/>
+                                        <TextBlock Grid.Column="1"
+                                                   Text="{Binding Title}"
+                                                   Foreground="#3498db" FontSize="12"
+                                                   TextWrapping="Wrap"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </Border>
             </Grid>
-        </Border>
+        </ScrollViewer>
+    </Grid>
+</Border>
     </Grid>
 </UserControl>

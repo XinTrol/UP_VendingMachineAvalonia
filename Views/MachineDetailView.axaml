@@ -1,0 +1,292 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="1100" d:DesignHeight="800"
+             x:Class="UP_4.Views.MachineDetailView"
+             xmlns:vm="clr-namespace:UP_4.ViewModels"
+             x:DataType="vm:MachineDetailViewModel">
+
+    <UserControl.Styles>
+        <!-- Стиль для заголовков групп -->
+        <Style Selector="TextBlock.groupHeader">
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="Foreground" Value="#333"/>
+            <Setter Property="Margin" Value="0,5,0,15"/>
+        </Style>
+        
+        <!-- Стиль для подписей полей -->
+        <Style Selector="TextBlock.label">
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Foreground" Value="#555"/>
+            <Setter Property="Margin" Value="0,0,0,5"/>
+        </Style>
+
+        <!-- Стиль для полей ввода (Исправлено: убрано VerticalContentAlignment) -->
+        <Style Selector="TextBox.field, ComboBox.field">
+            <Setter Property="Margin" Value="0,0,0,15"/>
+            <Setter Property="Height" Value="32"/>
+            <Setter Property="VerticalAlignment" Value="Top"/>
+        </Style>
+    </UserControl.Styles>
+
+    <Grid RowDefinitions="Auto, *">
+        
+        <!-- Заголовок страницы -->
+        <Border Background="White" Padding="20,15" BorderBrush="#E0E0E0" BorderThickness="0,0,0,1">
+            <TextBlock Text="{Binding Title}" FontSize="20" FontWeight="Bold" Foreground="#333"/>
+        </Border>
+
+        <!-- Основной контент с прокруткой -->
+        <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Background="#F9F9F9">
+            <StackPanel Margin="20" Spacing="20">
+                
+                <!-- Карточка формы -->
+                <Border Background="White" CornerRadius="6" Padding="25" BoxShadow="0 2 8 0 #1a000000">
+                    <StackPanel>
+                        
+                        <!-- Блок 1: Основная информация -->
+                        <TextBlock Classes="groupHeader" Text="Основные данные"/>
+                        <Grid ColumnDefinitions="*,20,*">
+                            <!-- Левая колонка -->
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Classes="label" Text="Наименование ТА *"/>
+                                <TextBox Classes="field" Text="{Binding Name}"/>
+
+                                <TextBlock Classes="label" Text="Производитель ТА *"/>
+                                <ComboBox Classes="field" ItemsSource="{Binding Companies}" 
+                                          SelectedItem="{Binding SelectedCompany}">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Name}"/>
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
+
+                                <TextBlock Classes="label" Text="Модель ТА *"/>
+                                <ComboBox Classes="field" ItemsSource="{Binding Models}" 
+                                          SelectedItem="{Binding SelectedModel}">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Name}"/>
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
+                                
+                                <TextBlock Classes="label" Text="Номер автомата *"/>
+                                <TextBox Classes="field" Text="{Binding SerialNumber}"/>
+                            </StackPanel>
+
+                            <!-- Правая колонка -->
+                            <StackPanel Grid.Column="2">
+                                <TextBlock Classes="label" Text="Режим работы *"/>
+                                <ComboBox Classes="field" ItemsSource="{Binding WorkModes}" 
+                                          SelectedItem="{Binding SelectedWorkMode}">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Name}"/>
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
+
+                                <TextBlock Classes="label" Text="Место *"/>
+                                <ComboBox Classes="field" ItemsSource="{Binding Places}" 
+                                          SelectedItem="{Binding SelectedPlace}">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Name}"/>
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
+
+                                <TextBlock Classes="label" Text="Клиент"/>
+                                <ComboBox Classes="field" ItemsSource="{Binding Clients}" 
+                                          SelectedItem="{Binding SelectedClient}">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Name}"/>
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
+                                
+                                <TextBlock Classes="label" Text="Приоритет обслуживания *"/>
+                                <ComboBox Classes="field" ItemsSource="{Binding Priorities}" 
+                                          SelectedItem="{Binding SelectedPriority}">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Name}"/>
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
+                            </StackPanel>
+                        </Grid>
+
+                        <Separator Margin="0,10,0,20" Background="#E0E0E0"/>
+
+                        <!-- Блок 2: Адрес и Время работы -->
+                        <TextBlock Classes="groupHeader" Text="Расположение и график"/>
+                        <Grid ColumnDefinitions="*,20,*">
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Classes="label" Text="Адрес *"/>
+                                <TextBox Classes="field" Text="{Binding Location}"/>
+                                
+                                <TextBlock Classes="label" Text="Координаты"/>
+                                <TextBox Classes="field" Text="{Binding Coordinates}" Watermark="54.5191,36.2802"/>
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="2">
+                                <TextBlock Classes="label" Text="Время работы (формат: 08:00-22:00) *"/>
+                                <TextBox Classes="field" Text="{Binding WorkingHours}" Watermark="08:00-22:00"/>
+
+                                <TextBlock Classes="label" Text="Часовой пояс *"/>
+                                <ComboBox Classes="field" ItemsSource="{Binding TimeZones}" 
+                                          SelectedItem="{Binding SelectedTimeZone}">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Name}"/>
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
+                            </StackPanel>
+                        </Grid>
+
+                        <Separator Margin="0,10,0,20" Background="#E0E0E0"/>
+                        
+                        <!-- Блок 3: Slave-автомат -->
+                        <TextBlock Classes="groupHeader" Text="Дополнительное оборудование (Slave)"/>
+                        <Grid ColumnDefinitions="*,20,*">
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Classes="label" Text="Производитель ТА (Slave)"/>
+                                <ComboBox Classes="field" ItemsSource="{Binding Companies}" 
+                                          SelectedItem="{Binding SelectedSlaveCompany}">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Name}"/>
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
+                            </StackPanel>
+                            <StackPanel Grid.Column="2">
+                                <TextBlock Classes="label" Text="Модель ТА (Slave)"/>
+                                <ComboBox Classes="field" ItemsSource="{Binding Models}" 
+                                          SelectedItem="{Binding SelectedSlaveModel}">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Name}"/>
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
+                            </StackPanel>
+                        </Grid>
+
+                        <Separator Margin="0,10,0,20" Background="#E0E0E0"/>
+
+                        <!-- Блок 4: Технические данные -->
+                        <TextBlock Classes="groupHeader" Text="Технические данные и персонал"/>
+                        <Grid ColumnDefinitions="*,20,*">
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Classes="label" Text="Техник-оператор"/>
+                                <ComboBox Classes="field" ItemsSource="{Binding Technicians}" 
+                                          SelectedItem="{Binding SelectedTechnician}">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding FullName}"/>
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
+                                
+                                <TextBlock Classes="label" Text="ID кассы Kit Online"/>
+                                <TextBox Classes="field" Text="{Binding KitOnlineId}"/>
+
+                                <TextBlock Classes="label" Text="RFID карты обслуживания"/>
+                                <TextBox Classes="field" Text="{Binding ServiceRfid}"/>
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="2">
+                                <TextBlock Classes="label" Text="Менеджер"/>
+                                <ComboBox Classes="field" ItemsSource="{Binding Managers}" 
+                                          SelectedItem="{Binding SelectedManager}">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding FullName}"/>
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
+
+                                <TextBlock Classes="label" Text="Инженер"/>
+                                <ComboBox Classes="field" ItemsSource="{Binding Engineers}" 
+                                          SelectedItem="{Binding SelectedEngineer}">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding FullName}"/>
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
+                                
+                                <TextBlock Classes="label" Text="RFID карты инкассации"/>
+                                <TextBox Classes="field" Text="{Binding CollectionRfid}"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <Separator Margin="0,10,0,20" Background="#E0E0E0"/>
+
+                        <!-- Блок 5: Платежные системы -->
+                        <TextBlock Classes="groupHeader" Text="Платежные системы и уведомления"/>
+                        <Grid ColumnDefinitions="*,20,*">
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Classes="label" Text="Платежные системы *"/>
+                                <ItemsControl ItemsSource="{Binding PaymentTypeSelections}" Margin="0,0,0,15">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <CheckBox Content="{Binding PaymentType.Name}" 
+                                                      IsChecked="{Binding IsSelected}"/>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                                
+                                <TextBlock Classes="label" Text="Шаблон крит. значений"/>
+                                <ComboBox Classes="field" ItemsSource="{Binding CriticalThresholdTemplates}" 
+                                          SelectedItem="{Binding SelectedCriticalThresholdTemplate}">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Name}"/>
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
+                            </StackPanel>
+                            <StackPanel Grid.Column="2">
+                                <TextBlock Classes="label" Text="Шаблон уведомлений"/>
+                                <ComboBox Classes="field" ItemsSource="{Binding NotificationTemplates}" 
+                                          SelectedItem="{Binding SelectedNotificationTemplate}">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Name}"/>
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
+                                
+                                <TextBlock Classes="label" Text="Примечания"/>
+                                <TextBox Text="{Binding Notes}" AcceptsReturn="True" Height="80" 
+                                         VerticalContentAlignment="Top" Padding="5"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <!-- Кнопка Сохранить -->
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,30,0,0">
+                            <Button Content="Сохранить" 
+                                    Command="{Binding SaveCommand}" 
+                                    Background="#007BFF" 
+                                    Foreground="White"
+                                    FontWeight="SemiBold"
+                                    Padding="40,12"
+                                    CornerRadius="4"
+                                    Cursor="Hand"/>
+                        </StackPanel>
+                        
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

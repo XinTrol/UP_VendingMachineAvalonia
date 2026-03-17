@@ -17,8 +17,6 @@ namespace UP_4.ViewModels
     public partial class VendingMachinesViewModel : ViewModelBase
     {
         [ObservableProperty] private bool _isTableView = true;
-
-        // ДОБАВЛЕНО: Свойство для режима Плитки
         [ObservableProperty] private bool _isTileView = false;
 
         [ObservableProperty] private string _searchText = string.Empty;
@@ -34,18 +32,18 @@ namespace UP_4.ViewModels
         public string ItemsInfo => $"Показано {DisplayedMachines.Count} из {TotalItems}";
         public int TotalPages => (int)Math.Ceiling((double)TotalItems / ItemsPerPage);
 
-        // Если db нет в ViewModelBase, раскомментируйте строку ниже:
-        // private readonly YourDbContext db = new YourDbContext(); 
+        [ObservableProperty]
+        private User currentUser;
 
-        public VendingMachinesViewModel()
+        public VendingMachinesViewModel(User user)
         {
+            CurrentUser = user;
             LoadDataCommand.Execute(null);
         }
 
         [RelayCommand]
         private async Task LoadData()
         {
-            // Проверка на null для db (для безопасности)
             if (db == null) return;
 
             _allMachinesCache = await db.Machines
@@ -56,8 +54,6 @@ namespace UP_4.ViewModels
             RefreshData();
         }
 
-        // ДОБАВЛЕНО: Синхронизация переключателей
-        // Когда включаем Таблицу, выключаем Плитку
         partial void OnIsTableViewChanged(bool value)
         {
             if (value && IsTileView)
@@ -66,7 +62,6 @@ namespace UP_4.ViewModels
                 IsTileView = true;
         }
 
-        // Когда включаем Плитку, выключаем Таблицу
         partial void OnIsTileViewChanged(bool value)
         {
             if (value && IsTableView)
@@ -165,18 +160,16 @@ namespace UP_4.ViewModels
         }
 
         [RelayCommand]
-        private void EditMachine(Machine machine)
+        private void AddMachine()
         {
-            // Логика редактирования
+            MainWindowViewModel.Instance.CurrentViewModel = new MachineDetailViewModel(CurrentUser);
         }
 
-        [ObservableProperty]
-        private User currentUser;
-
-        public VendingMachinesViewModel(User user)
+        [RelayCommand]
+        private void EditMachine(Machine machine)
         {
-            CurrentUser = user;
-            LoadDataCommand.Execute(null);
+            if (machine == null) return;
+            MainWindowViewModel.Instance.CurrentViewModel = new MachineDetailViewModel(CurrentUser, machine);
         }
 
         [RelayCommand]

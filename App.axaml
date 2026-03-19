@@ -4,8 +4,7 @@
              xmlns:local="using:UP_4"
              RequestedThemeVariant="Light"
              xmlns:lo="clr-namespace:UP_4.Converters">
-             <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
-
+             
     <Application.DataTemplates>
         <local:ViewLocator/>
     </Application.DataTemplates>

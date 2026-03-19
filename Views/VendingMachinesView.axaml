@@ -67,28 +67,25 @@
 
         <!-- Левое меню -->
         <Border Grid.Row="2" Grid.Column="0" Background="#1d2127">
-            <StackPanel Margin="10">
+             <StackPanel Margin="10">
                 <Button Content="Главная"
                         Command="{Binding GoToHomeCommand}"
                         Margin="0,0,0,10"
-                        Width="230"
-                        Height="50"
-                        Foreground="White"
-                        Background="#171717"
-                        VerticalContentAlignment="Center"
-                        HorizontalContentAlignment="Left"
-                        Padding="15,0,0,0"/>
-
+                        Width="230" Height="50"
+                        Foreground="White" Background="#171717"
+                        HorizontalContentAlignment="Left" VerticalContentAlignment="Center" Padding="15,0,0,0"/>
                 <Expander Header="Администрирование"
                           Width="230"
-                          Foreground="White">
+                          Foreground="White"
+                          Background="#1d2127">
                     <StackPanel>
                         <Button Content="Торговые автоматы"
-                                Width="200"
-                                Margin="0,0,0,10"
-                                Foreground="White"
-                                Background="#171717"/>
+                                Command="{Binding GoToMachinesCommand}"
+                                Width="200" Margin="0,0,0,10"
+                                Foreground="White" Background="#171717"/>
+                        
                         <Button Content="Список компаний"
+                                Command="{Binding GoToCompaniesCommand}"
                                 Width="200"
                                 Foreground="White"
                                 Background="#171717"/>

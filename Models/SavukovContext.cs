@@ -61,14 +61,33 @@ public partial class SavukovContext : DbContext
 
         modelBuilder.Entity<Company>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("companys_pkey");
-
+            entity.HasKey(e => e.Id);
             entity.ToTable("companys", "UP_41");
 
-            entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.Name)
-                .HasColumnType("character varying")
-                .HasColumnName("name");
+            entity.Property(e => e.Id)
+                  .HasColumnName("id")
+                  .ValueGeneratedOnAdd(); // Важно для serial4
+
+            entity.Property(e => e.Name).HasColumnName("name");
+            entity.Property(e => e.ParentCompanyId).HasColumnName("parent_company_id");
+            entity.Property(e => e.Address).HasColumnName("address");
+            entity.Property(e => e.Phone).HasColumnName("phone");
+            entity.Property(e => e.Email).HasColumnName("email");
+            entity.Property(e => e.ContactPerson).HasColumnName("contact_person");
+
+            entity.Property(e => e.CreatedDate)
+                  .HasColumnName("created_date")
+                  .HasConversion(
+                      v => DateTime.SpecifyKind(v.ToDateTime(TimeOnly.MinValue), DateTimeKind.Utc),
+                      v => DateOnly.FromDateTime(v)
+                  );
+
+            entity.Property(e => e.Inn).HasColumnName("inn");
+
+            entity.HasOne(d => d.ParentCompany)
+                .WithMany(p => p.ChildCompanies)
+                .HasForeignKey(d => d.ParentCompanyId)
+                .OnDelete(DeleteBehavior.Restrict);
         });
 
         modelBuilder.Entity<Machine>(entity =>
@@ -86,11 +105,21 @@ public partial class SavukovContext : DbContext
                 .HasColumnName("coordinates");
             entity.Property(e => e.CriticalThresholdTemplate).HasColumnName("critical_threshold_template");
             entity.Property(e => e.Engineer).HasColumnName("engineer");
-            entity.Property(e => e.InstallDate).HasColumnName("install_date");
+            entity.Property(e => e.InstallDate)
+                  .HasColumnName("install_date")
+                  .HasConversion(
+                      v => DateTime.SpecifyKind(v.ToDateTime(TimeOnly.MinValue), DateTimeKind.Utc),
+                      v => DateOnly.FromDateTime(v)
+                  );
             entity.Property(e => e.KitOnlineId)
                 .HasColumnType("character varying")
                 .HasColumnName("kit_online_id");
-            entity.Property(e => e.LastMaintenanceDate).HasColumnName("last_maintenance_date");
+            entity.Property(e => e.LastMaintenanceDate)
+                  .HasColumnName("last_maintenance_date")
+                  .HasConversion(
+                      v => DateTime.SpecifyKind(v.ToDateTime(TimeOnly.MinValue), DateTimeKind.Utc),
+                      v => DateOnly.FromDateTime(v)
+                  );
             entity.Property(e => e.Location)
                 .HasColumnType("character varying")
                 .HasColumnName("location");
@@ -203,7 +232,9 @@ public partial class SavukovContext : DbContext
 
             entity.ToTable("machine_payment_type", "UP_41");
 
-            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Id)
+                  .HasColumnName("id")
+                  .UseSerialColumn();
             entity.Property(e => e.IdMachine).HasColumnName("id_machine");
             entity.Property(e => e.IdPaymentType).HasColumnName("id_payment_type");
 

@@ -70,6 +70,24 @@ namespace UP_4.ViewModels
                 IsTableView = true;
         }
 
+        [RelayCommand]
+        private void GoToMachines()
+        {
+            MainWindowViewModel.Instance.CurrentViewModel = new VendingMachinesViewModel(CurrentUser);
+        }
+
+        [RelayCommand]
+        private void GoToHome()
+        {
+            MainWindowViewModel.Instance.CurrentViewModel = new MainPageViewModel(CurrentUser);
+        }
+
+        [RelayCommand]
+        private void GoToCompanies()
+        {
+            MainWindowViewModel.Instance.CurrentViewModel = new CompaniesViewModel(CurrentUser);
+        }
+
         partial void OnSearchTextChanged(string value) => RefreshData();
         partial void OnItemsPerPageChanged(int value) => RefreshData();
         partial void OnCurrentPageChanged(int value) => RefreshData();
@@ -170,12 +188,6 @@ namespace UP_4.ViewModels
         {
             if (machine == null) return;
             MainWindowViewModel.Instance.CurrentViewModel = new MachineDetailViewModel(CurrentUser, machine);
-        }
-
-        [RelayCommand]
-        private void GoToHome()
-        {
-            MainWindowViewModel.Instance.CurrentViewModel = new MainPageViewModel(CurrentUser);
         }
 
         [RelayCommand]

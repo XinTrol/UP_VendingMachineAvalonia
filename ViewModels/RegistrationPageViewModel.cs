@@ -44,32 +44,44 @@ namespace UP_4.ViewModels
 
     public partial class RegistrationPageViewModel : ViewModelBase
     {
+        [ObservableProperty] private string email = "";
+        [ObservableProperty] private string password = "";
+        [ObservableProperty] private string emailCode = "";
+        [ObservableProperty] private string franchiseCode = "";
+        [ObservableProperty] private string message = "";
 
-        [ObservableProperty]
-        private string email = "";
-        [ObservableProperty]
-        private string password = "";
-        [ObservableProperty]
-        private string emailCode = "";
-        [ObservableProperty]
-        private string franchiseCode = "";
-        [ObservableProperty]
-        private string message = "";
-
-        private string generatedEmailCode = "";
+        private string _generatedEmailCode;  // единое поле
 
         public ObservableCollection<MathExample> Examples { get; } = new();
 
-        public RegistrationPageViewModel()
+        // Конструктор для тестов (внедрение контекста)
+        public RegistrationPageViewModel(SavukovContext context)
         {
+            db = context;
             GenerateExamples();
         }
 
-        private void GenerateEmailCode()
+        // Конструктор для приложения (использует стандартный контекст)
+        public RegistrationPageViewModel()
+        {
+            db = new SavukovContext();
+            GenerateExamples();
+        }
+
+        // Публичный метод для генерации кода (используем единое поле)
+        public void GenerateEmailCode()
         {
             Random rnd = new Random();
-            generatedEmailCode = rnd.Next(100000, 999999).ToString();
+            _generatedEmailCode = rnd.Next(100000, 999999).ToString();
         }
+
+        public string GeneratedEmailCode => _generatedEmailCode;
+
+        public bool IsValidEmail(string email) =>
+            Regex.IsMatch(email, @"^[^@\s]+@[^@\s]+\.[^@\s]+$");
+
+        public bool IsValidPassword(string password) =>
+            Regex.IsMatch(password, @"^(?=.*[0-9])(?=.*[!@#$%^&*]).{8,}$");
 
         [RelayCommand]
         private void SendEmailCode()
@@ -86,30 +98,24 @@ namespace UP_4.ViewModels
                 return;
             }
 
-            GenerateEmailCode();
-            Message = $"Код подтверждения (эмуляция email): {generatedEmailCode}";
+            GenerateEmailCode();          // генерируем _generatedEmailCode
+            Message = $"Код подтверждения (эмуляция email): {_generatedEmailCode}";
         }
 
         private void GenerateExamples()
         {
             Examples.Clear();
-
             Random rnd = new Random();
             string chars = "+-*";
-
             int a = rnd.Next(1, 20);
             int b = rnd.Next(1, 20);
             int c = rnd.Next(1, 20);
             int d = rnd.Next(1, 20);
-
             char op1 = chars[rnd.Next(chars.Length)];
             char op2 = chars[rnd.Next(chars.Length)];
             char op3 = chars[rnd.Next(chars.Length)];
-
             string expression = $"{a} {op1} {b} {op2} {c} {op3} {d}";
-
             int result = (int)new System.Data.DataTable().Compute(expression, "");
-
             Examples.Add(new MathExample
             {
                 Expression = expression + " = ",
@@ -126,31 +132,18 @@ namespace UP_4.ViewModels
                     Message = "Решите CAPTCHA";
                     return false;
                 }
-
                 if (!int.TryParse(example.UserAnswer, out int ans))
                 {
                     Message = "Введите число";
                     return false;
                 }
-
                 if (ans != example.CorrectAnswer)
                 {
                     Message = "CAPTCHA решена неверно";
                     return false;
                 }
             }
-
             return true;
-        }
-
-        private bool IsValidEmail(string email)
-        {
-            return Regex.IsMatch(email, @"^[^@\s]+@[^@\s]+\.[^@\s]+$");
-        }
-
-        private bool IsValidPassword(string password)
-        {
-            return Regex.IsMatch(password, @"^(?=.*[0-9])(?=.*[!@#$%^&*]).{8,}$");
         }
 
         private async Task Reg()
@@ -178,7 +171,8 @@ namespace UP_4.ViewModels
                     return;
                 }
 
-                if (EmailCode != generatedEmailCode)
+                // Используем _generatedEmailCode
+                if (EmailCode != _generatedEmailCode)
                 {
                     Message = "Неверный код подтверждения email";
                     return;
@@ -206,12 +200,10 @@ namespace UP_4.ViewModels
                     Password = Password,
                     IdRole = 1
                 };
-
                 db.Users.Add(newUser);
                 await db.SaveChangesAsync();
 
                 Message = "Регистрация успешна";
-
                 MainWindowViewModel.Instance.CurrentViewModel = new MainPageViewModel(newUser);
             }
             catch (Exception ex)
@@ -221,15 +213,9 @@ namespace UP_4.ViewModels
         }
 
         [RelayCommand]
-        private async Task RegistrationAdd()
-        {
-            await Reg();
-        }
+        private async Task RegistrationAdd() => await Reg();
 
         [RelayCommand]
-        private void Back()
-        {
-            MainWindowViewModel.Instance.CurrentViewModel = new AuthPageViewModel();
-        }
+        private void Back() => MainWindowViewModel.Instance.CurrentViewModel = new AuthPageViewModel();
     }
 }

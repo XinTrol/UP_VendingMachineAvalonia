@@ -13,9 +13,17 @@ namespace UP_4.ViewModels
 {
     public partial class AuthPageViewModel: ViewModelBase
     {
-        [ObservableProperty] string email = "kolbaska321@mail.ru";
-        [ObservableProperty] string password = "321";
+        [ObservableProperty] string email = "";
+        [ObservableProperty] string password = "";
         [ObservableProperty] string message = "";
+
+
+        public AuthPageViewModel(SavukovContext context)
+        {
+            db = context; // предполагается, что в ViewModelBase есть поле db типа SavukovContext
+        }
+
+        public AuthPageViewModel() : this(new SavukovContext()) { }
 
         [RelayCommand]
         public void Enter()
